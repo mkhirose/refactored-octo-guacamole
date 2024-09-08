@@ -1,0 +1,21 @@
+<h2>ホーム</h2>
+<ul>
+    <h3>ブログ一覧</h3>
+    {% for post in posts %}
+    <li>
+        <a href="{% url 'post_detail' post.id %}">{{ post.title }}</a>
+        <p>By {{ post.author }} on {{ post.created_at }}</p>
+    </li>
+    {% endfor %}
+</ul>
+<a href="{% url 'post_create' %}">新規投稿</a>
+
+<!-- ログアウトボタンを追加 -->
+{% if user.is_authenticated %}
+    <form method="POST" action="{% url 'logout' %}">
+        {% csrf_token %}
+        <button type="submit" class="btn btn-danger">ログアウト</button>
+    </form>
+{% else %}
+    <a href="{% url 'login' %}" class="btn btn-primary">Login</a>
+{% endif %}

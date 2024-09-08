@@ -1,0 +1,54 @@
+<h2>{{ post.title }}</h2>
+<p>{{ post.content }}</p>
+<p>投稿者： {{ post.author }} 更新日時： {{ post.created_at }}</p>
+
+{% if post.author == user %}
+    <a href="{% url 'post_edit' post.id %}">編集</a>
+    <a href="{% url 'post_delete' post.id %}">削除</a>
+{% endif %}
+
+<!-- コメント一覧 -->
+<h3>コメント:</h3>
+<ul>
+    {% for comment in post.comments.all %}
+    <li>
+        <p>{{ comment.user }}: {{ comment.content }}</p>
+        <p>{{ comment.created_at }}</p>
+    </li>
+    {% empty %}
+    <li>まだコメントはありません</li>
+    {% endfor %}
+</ul>
+
+<!-- コメント追加フォーム -->
+<h3>コメントを追加する:</h3>
+<form method="post" action="{% url 'add_comment' post.id %}">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit">コメント</button>
+</form>
+
+<!-- いいねボタン -->
+<p>
+    <button id="like-button">{{ is_liked|yesno:"Unlike,Like" }}</button>
+    <span id="like-count">{{ post.like_set.count }}</span> Likes
+</p>
+
+<script>
+document.getElementById('like-button').addEventListener('click', function() {
+    var button = this;
+    var postId = {{ post.id }};
+    
+    fetch(`/post/${postId}/like/`, {
+        method: 'POST',
+        headers: {
+            'X-CSRFToken': '{{ csrf_token }}'
+        }
+    }).then(response => response.json()).then(data => {
+        button.innerText = data.liked ? 'Unlike' : 'Like';
+        document.getElementById('like-count').innerText = data.like_count;
+    });
+});
+</script>
+<!-- 戻るボタンを追加 -->
+<a href="{% url 'home' %}" class="btn btn-primary">ホーム</a>
