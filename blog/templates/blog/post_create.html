@@ -1,3 +1,4 @@
+{% block content %}
 <h2>ブログ新規投稿</h2>
 <form method="post">
     {% csrf_token %}
@@ -5,4 +6,5 @@
     <button type="submit">投稿する</button>
 </form>
 <!-- 戻るボタンを追加 -->
-<a href="{% url 'post_detail' post.id %}">戻る</a>
+<a href="{% url 'home' %}" class="btn btn-primary">ホーム</a>
+{% endblock %}

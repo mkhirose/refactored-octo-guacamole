@@ -8,7 +8,7 @@
     </li>
     {% endfor %}
 </ul>
-<a href="{% url 'post_create' %}">新規投稿</a>
+<a href="{% url 'post_create' %}" class="btn btn-primary">新規投稿</a>
 
 <!-- ログアウトボタンを追加 -->
 {% if user.is_authenticated %}

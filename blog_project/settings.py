@@ -23,9 +23,9 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-((&#2q_n@^8i9z_fc9lg0j5&ge#$@g14gb+tgy#c2r-wm!%6(b'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 
-ALLOWED_HOSTS = ['localhost', '.pythonanywhere.com', '{|mkhrs|}.pythonanywhere.com']
+ALLOWED_HOSTS = ['127.0.0.1','localhost', '.pythonanywhere.com', '{|mkhrs|}.pythonanywhere.com']
 
 
 # Application definition
@@ -124,8 +124,10 @@ STATIC_URL = 'static/'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 # リダイレクト先をホーム画面にする
-LOGIN_REDIRECT_URL = '/home/'  # ホームページにリダイレクトする
-LOGOUT_REDIRECT_URL = '/login/' # ログアウトしたらログイン画面へ
+LOGIN_REDIRECT_URL = 'home'  # ホームページにリダイレクトする
+LOGOUT_REDIRECT_URL = 'login' # ログアウトしたらログイン画面へ
+# ログインページのURLを設定
+LOGIN_URL = 'login'
 
 CSRF_COOKIE_SECURE = True
 SESSION_COOKIE_SECURE = True
