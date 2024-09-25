@@ -1,0 +1,8 @@
+{% extends 'blog/base.html' %}
+
+<h2>ブログを編集する</h2>
+<form method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit">セーブ</button>
+</form>

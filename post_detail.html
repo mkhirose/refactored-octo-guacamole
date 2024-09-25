@@ -1,0 +1,147 @@
+{% extends 'blog/base.html' %}
+
+{% block content %}
+<body>
+<h2>{{ post.title }}</h2>
+<p>{{ post.content }}</p>
+<p>投稿者： {{ post.author }} 更新日時： {{ post.created_at }}</p>
+
+{% if post.picture %}
+    <img src="{{ post.picture.url }}" alt="{{ post.title }}">
+{% endif %}
+
+{% if post.author == user %}
+    <a href="{% url 'post_edit' post.id %}">編集</a>
+<!-- 投稿削除ボタン -->
+    <button id="delete-button" data-url="{% url 'post_delete_ajax' post.id %}">削除</button>
+
+  {% endif %}
+
+
+<!-- コメント一覧 -->
+<h3>コメントを投稿する</h3>
+<form id="comment-form" method="POST">
+    {% csrf_token %}
+    {{ comment_form.as_p }}
+    <button type="submit">コメントを投稿</button>
+</form>
+
+<script>
+document.getElementById('comment-form').addEventListener('submit', function(event) {
+    if (!{{ user.is_authenticated|yesno:"true,false" }}) {
+        event.preventDefault();  // フォームの送信をキャンセル
+        window.location.href = "{% url 'login' %}?next={{ request.path }}";  // ログイン画面に遷移
+    }
+});
+</script>
+
+<h3>コメントに返信する:</h3>
+<div>
+    {% for comment in comments %}
+        <div class="comment">
+            <p>{{ comment.user.username }}: {{ comment.content }}</p>
+            <p><a href="#" class="reply" data-comment-id="{{ comment.id }}">返信</a></p>
+             <!-- 返信コメントを表示 -->
+            {% for reply in comment.replies.all %}
+                <div class="reply">
+                    <p>{{ reply.user.username }}: {{ reply.content }}</p>
+                </div>
+            {% endfor %}
+            <!-- 返信フォーム -->
+            <div id="reply-form-{{ comment.id }}" class="reply-form" style="display: none;">
+                <form method="POST">
+                    {% csrf_token %}
+                    {{ comment_form.as_p }}
+                    <input type="hidden" name="parent_id" value="{{ comment.id }}">
+                    <button type="submit">返信を投稿</button>
+                </form>
+            </div>
+        </div>
+    {% endfor %}
+</div>
+
+
+<script>
+    // 返信ボタンをクリックすると、返信フォームが表示される
+    document.querySelectorAll('.reply').forEach(function(button) {
+        button.addEventListener('click', function(e) {
+            e.preventDefault();
+            const commentId = this.getAttribute('data-comment-id');
+            document.getElementById('reply-form-' + commentId).style.display = 'block';
+        });
+    });
+</script>
+
+<!-- いいねボタン -->
+<p>
+    <button id="like-button" {% if not user.is_authenticated %}onclick="redirectToLogin()"{% endif %}>
+        {{ is_liked|yesno:"Unlike,Like" }}
+    </button>
+    <span id="like-count">{{ post.like_set.count }}</span> Likes
+</p>
+
+<script>
+function redirectToLogin() {
+    window.location.href = "{% url 'login' %}?next={{ request.path }}";  // ログイン画面に遷移
+}
+
+document.getElementById('like-button').addEventListener('click', function(event) {
+    if (!{{ user.is_authenticated|yesno:"true,false" }}) {
+        event.preventDefault();  // イベントをキャンセル
+        redirectToLogin();  // ログイン画面に遷移
+        return;  // 処理を終了
+    }
+
+    var button = this;
+    var postId = {{ post.id }};
+    
+    fetch(`/post/${postId}/like/`, {
+        method: 'POST',
+        headers: {
+            'X-CSRFToken': '{{ csrf_token }}'
+        }
+    }).then(response => response.json()).then(data => {
+        button.innerText = data.liked ? 'Unlike' : 'Like';
+        document.getElementById('like-count').innerText = data.like_count;
+    });
+});
+</script>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+$(document).ready(function() {
+    // 削除ボタンがクリックされたときの処理
+    $('#delete-button').on('click', function(e) {
+        e.preventDefault(); // デフォルトの動作を防ぐ
+
+        // 確認ダイアログを表示
+        if (confirm("本当にこの投稿を削除しますか？")) {
+            const url = $(this).data('url'); // ボタンからURLを取得
+            
+            // Ajaxリクエストを送信
+            $.ajax({
+                type: "POST",
+                url: url,
+                headers: {
+                    'X-CSRFToken': '{{ csrf_token }}' // CSRFトークンを送信
+                },
+                success: function(response) {
+                    if (response.success) {
+                        // 成功したら投稿を削除する
+                        alert("投稿が削除されました。");    
+                            window.location.href = "{% url 'home' %}";
+                     } else {
+                        alert("削除に失敗しました。");
+                    }
+                },
+                error: function() {
+                    alert("削除に失敗しました。");
+                }
+            });
+        }
+    });
+});
+</script>
+
+</body>
+{% endblock %}

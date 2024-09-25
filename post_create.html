@@ -1,0 +1,12 @@
+{% extends 'blog/base.html' %}
+
+{% block content %}
+<h2>ブログ新規投稿</h2>
+<form method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit">投稿する</button>
+</form>
+{% comment %} <!-- 戻るボタンを追加 -->
+<a href="{% url 'home' %}" class="btn btn-primary">ホーム</a>
+{% endblock %} {% endcomment %}
