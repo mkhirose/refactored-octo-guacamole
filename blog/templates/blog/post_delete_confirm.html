@@ -1,6 +1,0 @@
-<h2> "{{ post.title }}" を削除しますか?</h2>
-<form method="post">
-    {% csrf_token %}
-    <button type="submit">削除</button>
-    <a href="{% url 'post_detail' post.id %}">キャンセル</a>
-</form>

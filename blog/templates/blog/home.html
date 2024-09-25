@@ -1,21 +1,52 @@
-<h2>ホーム</h2>
-<ul>
-    <h3>ブログ一覧</h3>
-    {% for post in posts %}
-    <li>
-        <a href="{% url 'post_detail' post.id %}">{{ post.title }}</a>
-        <p>By {{ post.author }} on {{ post.created_at }}</p>
-    </li>
-    {% endfor %}
-</ul>
-<a href="{% url 'post_create' %}" class="btn btn-primary">新規投稿</a>
+{% extends 'blog/base.html' %}
 
-<!-- ログアウトボタンを追加 -->
-{% if user.is_authenticated %}
-    <form method="POST" action="{% url 'logout' %}">
-        {% csrf_token %}
-        <button type="submit" class="btn btn-danger">ログアウト</button>
-    </form>
-{% else %}
-    <a href="{% url 'login' %}" class="btn btn-primary">Login</a>
-{% endif %}
+{% block title %}ホーム{% endblock %}
+
+{% block content %}
+
+    <!-- 並び替えリンク -->
+    <h1>投稿一覧</h1>
+    <div>
+        <a href="?ordering=newest">最新順</a> |
+        <a href="?ordering=oldest">古い順</a> |
+        <a href="?ordering=likes">いいね順</a>
+    </div>
+
+    <ul>
+        {% for post in page_obj %}
+            <li>
+                <a href="{% url 'post_detail' post.id %}">{{ post.title }}</a> - 作成日: {{ post.created_at }} - いいね数: {{ post.like_set.count }}
+            </li>
+        {% endfor %}
+    </ul>
+
+    <!-- ページネーション -->
+    <div>
+        {% if is_paginated %}
+            <div>
+                {% if page_obj.has_previous %}
+                    <a href="?page={{ page_obj.previous_page_number }}&ordering={{ request.GET.ordering }}">前へ</a>
+                {% endif %}
+                {% if page_obj.has_next %}
+                    <a href="?page={{ page_obj.next_page_number }}&ordering={{ request.GET.ordering }}">次へ</a>
+                {% endif %}
+            </div>
+        {% endif %}
+    </div>
+
+    {% comment %} <!-- 新規投稿ボタンを追加 -->
+    <a href="{% url 'post_create' %}" class="btn btn-primary">新規投稿</a> {% endcomment %}
+
+    {% comment %} <!-- パスワード変更ボタンを追加 -->
+    <a href="{% url 'change_password' %}">パスワードを変更する</a>
+
+    <!-- ログアウトボタンを追加 -->
+    {% if user.is_authenticated %}
+        <form method="POST" action="{% url 'logout' %}">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-danger">ログアウト</button>
+        </form>
+    {% else %}
+        <a href="{% url 'login' %}" class="btn btn-primary">Login</a>
+    {% endif %} {% endcomment %}
+{% endblock %}

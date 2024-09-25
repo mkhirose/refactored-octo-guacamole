@@ -6,6 +6,7 @@ class Post(models.Model):
     title = models.CharField(max_length=200) # タイトル
     content = models.TextField() # 本文
     author = models.ForeignKey(User, on_delete=models.CASCADE) # 著者
+    picture = models.ImageField(upload_to='post_images/', blank=True, null=True)  # 画像フィールド
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 

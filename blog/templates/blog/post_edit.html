@@ -1,8 +1,8 @@
+{% extends 'blog/base.html' %}
+
 <h2>ブログを編集する</h2>
 <form method="post">
     {% csrf_token %}
     {{ form.as_p }}
     <button type="submit">セーブ</button>
 </form>
-<!-- 戻るボタンを追加 -->
-<a href="{% url 'post_detail' post.id %}">戻る</a>
