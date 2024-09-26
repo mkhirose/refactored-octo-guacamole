@@ -23,7 +23,13 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-((&#2q_n@^8i9z_fc9lg0j5&ge#$@g14gb+tgy#c2r-wm!%6(b'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
+
+STATIC_URL = '/static/'
+STATICFILES_DIRS = [
+    BASE_DIR / "static",  # プロジェクト内の静的ファイルを置くディレクトリ
+]
+STATIC_ROOT = '/home/mkhrs/refactored-octo-guacamole/staticfiles'
 
 ALLOWED_HOSTS = ['127.0.0.1','localhost', '.pythonanywhere.com', '{|mkhrs|}.pythonanywhere.com']
 
