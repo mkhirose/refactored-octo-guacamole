@@ -156,47 +156,42 @@ def like_post(request, post_id):
     return JsonResponse({'liked': liked, 'like_count': like_count})
 
 # コメント追加
-# def add_comment(request, post_id):
-#     post = get_object_or_404(Post, id=post_id)
-    
-#     if request.method == 'POST':
-#         form = CommentForm(request.POST)
-#         if form.is_valid():
-#             comment = form.save(commit=False)
-#             comment.post = post
-#             comment.user = request.user
-#             comment.save()
-#             return redirect('post_detail', post_id=post.id)
-#     else:
-#         form = CommentForm()
-    
-#     return render(request, 'blog/add_comment.html', {'form': form, 'post': post})
+def add_comment(request, post_id):
+    post = get_object_or_404(Post, id=post_id)
+    if request.method == 'POST':
+        content = request.POST['content']
+        parent_id = request.POST.get('parent_id')  # 親コメントのIDを取得
+        comment = Comment.objects.create(content=content, user=request.user, post=post)
+        
+        if parent_id:
+            parent_comment = get_object_or_404(Comment, id=parent_id)
+            comment.parent = parent_comment  # 親コメントを設定
+            comment.save()
+
+        return redirect('post_detail', post_id=post.id)
 
 def post_detail(request, post_id):
     post = get_object_or_404(Post, id=post_id)
-    comments = post.comments.filter(parent=None)  # 親コメントのみ取得
+    comments = Comment.objects.filter(post=post).select_related('user').prefetch_related('replies')  # 'comment_set' ではなく 'replies'
     comment_form = CommentForm()
 
     if request.method == 'POST':
         comment_form = CommentForm(request.POST)
         if comment_form.is_valid():
             new_comment = comment_form.save(commit=False)
-            new_comment.user = request.user
             new_comment.post = post
-            
-            # 親コメントが指定された場合
-            parent_id = request.POST.get('parent_id')
-            if parent_id:
+            new_comment.user = request.user
+            if 'parent_id' in request.POST:
+                parent_id = request.POST.get('parent_id')
                 parent_comment = Comment.objects.get(id=parent_id)
                 new_comment.parent = parent_comment
-            
             new_comment.save()
-            return redirect('post_detail', post_id=post.id)
-    
+            return redirect('post_detail', post_id=post_id)
+
     return render(request, 'blog/post_detail.html', {
         'post': post,
         'comments': comments,
-        'comment_form': comment_form
+        'comment_form': comment_form,
     })
 
 def change_password(request):

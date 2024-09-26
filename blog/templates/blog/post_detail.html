@@ -35,39 +35,60 @@ document.getElementById('comment-form').addEventListener('submit', function(even
 });
 </script>
 
-<h3>コメントに返信する:</h3>
-<div>
+<!-- コメントの表示部分 -->
+<div class="comments">
     {% for comment in comments %}
-        <div class="comment">
-            <p>{{ comment.user.username }}: {{ comment.content }}</p>
-            <p><a href="#" class="reply" data-comment-id="{{ comment.id }}">返信</a></p>
-             <!-- 返信コメントを表示 -->
-            {% for reply in comment.replies.all %}
-                <div class="reply">
-                    <p>{{ reply.user.username }}: {{ reply.content }}</p>
+        {% if not comment.parent %}
+            <div class="comment">
+                <p><strong>{{ comment.user.username }}</strong> said:</p>
+                <p>{{ comment.content }}</p>
+                <p><small>{{ comment.created_at }}</small></p>
+
+                <!-- 返信ボタン -->
+                <a href="#" class="reply-button" data-comment-id="{{ comment.id }}">返信</a>
+
+                <!-- 子コメント（返信）の表示 -->
+                <div class="replies" style="margin-left: 20px;">
+                    {% for reply in comment.replies.all %}
+                        <div class="reply">
+                            <p><strong>{{ reply.user.username }}</strong> replied:</p>
+                            <p style="font-size: smaller;">{{ reply.content }}</p>
+                            <p><small>{{ reply.created_at }}</small></p>
+                        </div>
+                    {% endfor %}
                 </div>
-            {% endfor %}
-            <!-- 返信フォーム -->
-            <div id="reply-form-{{ comment.id }}" class="reply-form" style="display: none;">
-                <form method="POST">
-                    {% csrf_token %}
-                    {{ comment_form.as_p }}
-                    <input type="hidden" name="parent_id" value="{{ comment.id }}">
-                    <button type="submit">返信を投稿</button>
-                </form>
             </div>
-        </div>
+        {% endif %}
     {% endfor %}
 </div>
+        
+        {% comment %} <!-- 返信フォーム（最初は非表示） -->
+        <div class="reply-form" style="display: none;" data-comment-id="{{ comment.id }}">
+            <form method="POST" action="{% url 'add_comment' post.id %}">
+                {% csrf_token %}
+                <input type="hidden" name="parent_id" value="{{ comment.id }}">
+                <textarea name="content" rows="3" required></textarea>
+                <button type="submit">返信を投稿する</button>
+            </form>
+        </div>
+    </div>
+{% endfor %} {% endcomment %}
 
 
+<!-- 返信ボタンをクリックすると、返信フォームが表示される -->
 <script>
-    // 返信ボタンをクリックすると、返信フォームが表示される
-    document.querySelectorAll('.reply').forEach(function(button) {
-        button.addEventListener('click', function(e) {
-            e.preventDefault();
+    document.querySelectorAll('.reply-button').forEach(button => {
+        button.addEventListener('click', function(event) {
+            event.preventDefault();
             const commentId = this.getAttribute('data-comment-id');
-            document.getElementById('reply-form-' + commentId).style.display = 'block';
+            const replyFormHtml = `
+                <form method="POST" action="">
+                    {% csrf_token %}
+                    <textarea name="content" rows="4" placeholder="返信内容を入力してください"></textarea>
+                    <input type="hidden" name="parent_id" value="${commentId}">
+                    <button type="submit">返信を投稿</button>
+                </form>`;
+            this.insertAdjacentHTML('afterend', replyFormHtml);
         });
     });
 </script>
