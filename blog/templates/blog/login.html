@@ -1,3 +1,6 @@
+{% extends 'blog/base.html' %}
+
+{% block content %}
 <h2>ログイン</h2>
 <form method="post">
     {% csrf_token %}
@@ -9,3 +12,14 @@
 
 <!-- 新規登録画面に遷移 -->
   <p>ユーザ登録がまだの方はこちら <a href="{% url 'signup' %}">新規ユーザ登録</a></p> <!-- 新規登録リンク -->
+
+<!-- ログアウトしましたのメッセージを表示 -->
+{% if messages %}
+    <ul>
+        {% for message in messages %}
+            <h3>{{ message }}</h3>
+        {% endfor %}
+    </ul>
+{% endif %}
+
+{% endblock %}

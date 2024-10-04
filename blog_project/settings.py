@@ -23,16 +23,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-((&#2q_n@^8i9z_fc9lg0j5&ge#$@g14gb+tgy#c2r-wm!%6(b'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
-
-STATIC_URL = '/static/'
-STATICFILES_DIRS = [
-    BASE_DIR / "static",  # プロジェクト内の静的ファイルを置くディレクトリ
-]
-STATIC_ROOT = '/home/mkhrs/refactored-octo-guacamole/staticfiles'
-
-ALLOWED_HOSTS = ['127.0.0.1','localhost', '.pythonanywhere.com', '{|mkhrs|}.pythonanywhere.com']
-
+DEBUG = True
 
 # Application definition
 
@@ -129,6 +120,12 @@ STATIC_URL = '/static/'
 STATICFILES_DIRS = [
     BASE_DIR / 'static',
 ]
+
+
+# STATIC_ROOT =  os.path.join(BASE_DIR, 'staticfiles')
+#STATIC_ROOT = '/home/mkhrs/refactored-octo-guacamole/staticfiles'
+
+# ALLOWED_HOSTS = ['127.0.0.1','localhost', '.pythonanywhere.com', '{|mkhrs|}.pythonanywhere.com']
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field

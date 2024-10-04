@@ -88,6 +88,11 @@ def custom_password_reset_confirm(request):
 
     return render(request, 'blog/custom_password_reset_confirm.html', {'form': form})
 
+# ログアウト
+def logout_view(request):
+    logout(request)
+    messages.success(request, "《ログアウトしました。》")
+    return redirect('login')  # 'login' はログイン画面のURL名
 
 @login_required
 # 投稿作成
