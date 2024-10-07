@@ -6,17 +6,20 @@
 <p>{{ post.content }}</p>
 <p>投稿者： {{ post.author }} 更新日時： {{ post.created_at }}</p>
 
-{% if post.picture %}
-    <img src="{{ post.picture.url }}" alt="{{ post.title }}">
-{% endif %}
+<div class="image-container">
+    {% if post.picture %}
+        <img src="{{ post.picture.url }}" alt="{{ post.title }}">
+    {% endif %}
 
-{% if post.author == user %}
-    <a href="{% url 'post_edit' post.id %}">編集</a>
+    <div class="image-buttons">
+        {% if post.author == user %}
+            <a href="{% url 'post_edit' post.id %}">編集</a>
 <!-- 投稿削除ボタン -->
-    <button id="delete-button" data-url="{% url 'post_delete_ajax' post.id %}">削除</button>
-
-  {% endif %}
-
+            <button id="delete-button" data-url="{% url 'post_delete_ajax' post.id %}">削除</button>
+        {% endif %}
+    </div>
+</div>
+<div id="delete-error-message" style="display: none; color: red;"></div>
 
 <!-- コメント一覧 -->
 <h3>コメントを投稿する</h3>
@@ -61,19 +64,6 @@ document.getElementById('comment-form').addEventListener('submit', function(even
         {% endif %}
     {% endfor %}
 </div>
-        
-        {% comment %} <!-- 返信フォーム（最初は非表示） -->
-        <div class="reply-form" style="display: none;" data-comment-id="{{ comment.id }}">
-            <form method="POST" action="{% url 'add_comment' post.id %}">
-                {% csrf_token %}
-                <input type="hidden" name="parent_id" value="{{ comment.id }}">
-                <textarea name="content" rows="3" required></textarea>
-                <button type="submit">返信を投稿する</button>
-            </form>
-        </div>
-    </div>
-{% endfor %} {% endcomment %}
-
 
 <!-- 返信ボタンをクリックすると、返信フォームが表示される -->
 <script>
@@ -152,11 +142,11 @@ $(document).ready(function() {
                         alert("投稿が削除されました。");    
                             window.location.href = "{% url 'home' %}";
                      } else {
-                        alert("削除に失敗しました。");
+                         $('#delete-error-message').text("削除に失敗しました。").show();
                     }
                 },
                 error: function() {
-                    alert("削除に失敗しました。");
+                     $('#delete-error-message').text("削除に失敗しました。").show();
                 }
             });
         }

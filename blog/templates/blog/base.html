@@ -14,8 +14,13 @@
             <ul>
                 <li><a href="{% url 'home' %}">ホーム</a></li>
                 <li><a href="{% url 'post_create' %}">新規投稿</a></li>
-                <li><a href="{% url 'login' %}">ログイン</a></li>
-                <li><a href="{% url 'logout' %}">ログアウト</a></li>
+                {% if user.is_authenticated %}
+                    <!-- ログインしているときだけ表示 -->
+                    <li><a href="{% url 'logout' %}">ログアウト</a></li>
+                {% else %}
+                    <!-- 未ログイン時のみ表示 -->
+                    <li><a href="{% url 'login' %}">ログイン</a></li>
+                {% endif %}
                 <li><a href="{% url 'change_password' %}">パスワードを変更する</a></li>
             </ul>
         </nav>

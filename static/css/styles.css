@@ -57,3 +57,45 @@ footer {
 .reply {
     font-size: smaller;
 }
+.image-container {
+    text-align: center; /* 画像とボタンを中央に揃えたい場合 */
+}
+
+.image-buttons {
+    margin-top: 10px; /* 画像とボタンの間にスペースを追加 */
+}
+
+.edit-btn, .delete-btn {
+    margin: 0 5px; /* ボタン間のスペースを調整 */
+    padding: 5px 10px;
+    font-size: 14px;
+}
+#delete-error-message {
+    color: red;
+    font-weight: bold;
+    margin-top: 10px;
+}
+.error {
+    color: red;
+}
+.errorlist {
+    color: red;
+    font-size: 14px;
+    list-style-type: none;  /* リストスタイルを消す */
+    padding-left: 0;        /* 左側の余白をなくす */
+}
+/* messagesフレームワークのエラーメッセージを赤文字にする */
+/* .message.error {
+    color: red;
+    font-weight: bold;
+} */
+/* バリデーションエラーメッセージやフォームエラーメッセージを赤文字に設定 */
+/* .errorlist li, .invalid-feedback, .form-error {
+    color: red;
+    font-weight: bold;
+} */
+
+/* さらに、Bootstrapの警告クラスが使われている場合に対応する例 */
+/* .alert-danger {
+    color: red;
+} */

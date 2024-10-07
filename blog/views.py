@@ -114,7 +114,7 @@ def post_edit(request, post_id):
         return redirect('home')
     
     if request.method == 'POST':
-        form = PostForm(request.POST, instance=post)
+        form = PostForm(request.POST,request.FILES, instance=post)
         if form.is_valid():
             form.save()
             return redirect('post_detail', post_id=post.id)
@@ -198,7 +198,7 @@ def post_detail(request, post_id):
         'comments': comments,
         'comment_form': comment_form,
     })
-
+    
 def change_password(request):
     if request.method == 'POST':
         form = PasswordChangeForm(request.user, request.POST)
